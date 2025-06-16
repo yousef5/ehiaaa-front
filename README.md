@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.png" alt="Ehiaaa Logo" width="120" height="120">
+  <img src="https://raw.githubusercontent.com/yousef5/ehiaaa-front/main/public/logo.png" alt="Ehiaaa Logo" width="120" height="120">
   
   # 🩸 Ehiaaa Front
   ### منصة إحياء للتبرع بالدم - الواجهة الأمامية
@@ -14,7 +14,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](http://makeapullrequest.com)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/your-username/ehiaaa-front/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/yousef5/ehiaaa-front/graphs/commit-activity)
+[![GitHub stars](https://img.shields.io/github/stars/yousef5/ehiaaa-front?style=for-the-badge)](https://github.com/yousef5/ehiaaa-front/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/yousef5/ehiaaa-front?style=for-the-badge)](https://github.com/yousef5/ehiaaa-front/network)
 
 </div>
 
@@ -23,6 +25,10 @@
 ## 🌟 Overview
 
 **Ehiaaa Front** is a modern, responsive frontend application for the Ehiaaa blood donation platform. Built with Next.js 14+ and TypeScript, it provides a seamless experience for blood donors, hospitals, and blood banks to connect and save lives.
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/yousef5/ehiaaa-front/main/public/images/hero1.webp" alt="Ehiaaa Platform Preview" width="600" style="border-radius: 10px; margin: 20px 0;">
+</div>
 
 ### 🎯 Key Features
 
@@ -35,6 +41,25 @@
 - 🌍 **RTL Support** - Full Arabic language support
 - 📊 **Real-time Updates** - Live data with React Query
 - 🎨 **Modern UI** - Built with ShadCN/UI and Tailwind CSS
+
+---
+
+## 📱 Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="https://raw.githubusercontent.com/yousef5/ehiaaa-front/main/public/images/hero2.webp" alt="Home Page" width="300">
+        <br><em>Home Page</em>
+      </td>
+      <td align="center">
+        <img src="https://raw.githubusercontent.com/yousef5/ehiaaa-front/main/public/images/hero3.webp" alt="Dashboard" width="300">
+        <br><em>Admin Dashboard</em>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
@@ -91,7 +116,7 @@
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/ehiaaa-front.git
+   git clone https://github.com/yousef5/ehiaaa-front.git
    cd ehiaaa-front
    ```
 
@@ -357,6 +382,14 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ---
 
+## 📊 Project Stats
+
+<div align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=yousef5&repo=ehiaaa-front&show_icons=true&theme=radical" alt="GitHub Stats">
+</div>
+
+---
+
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
@@ -376,11 +409,13 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 - **Email**: support@ehiaaa.com
 - **Documentation**: [docs.ehiaaa.com](https://docs.ehiaaa.com)
-- **Issues**: [GitHub Issues](https://github.com/your-username/ehiaaa-front/issues)
+- **Issues**: [GitHub Issues](https://github.com/yousef5/ehiaaa-front/issues)
 
 ---
 
 <div align="center">
   <p><strong>Made with ❤️ for saving lives through blood donation</strong></p>
   <p>🩸 <em>"Every drop counts, every life matters"</em> 🩸</p>
+  
+  <img src="https://raw.githubusercontent.com/yousef5/ehiaaa-front/main/public/logo.png" alt="Ehiaaa Footer Logo" width="60" height="60">
 </div>
