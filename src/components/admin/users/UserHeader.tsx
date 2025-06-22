@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
   CheckCircle,
+  KeyRound,
   UserCheck,
   UserX,
   XCircle,
@@ -22,6 +23,7 @@ interface UserHeaderProps {
   onUserAction: (action: "approve" | "reject", reason?: string) => void;
   onStatusToggle: () => void;
   onAvatarUpdate: () => void;
+  onPasswordChange: () => void;
   isLoading: boolean;
   router: AppRouterInstance;
 }
@@ -31,6 +33,7 @@ export function UserHeader({
   onUserAction,
   onStatusToggle,
   onAvatarUpdate,
+  onPasswordChange,
   isLoading,
   router,
 }: UserHeaderProps) {
@@ -108,6 +111,17 @@ export function UserHeader({
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onPasswordChange}
+            disabled={isLoading}
+            className="border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors duration-200"
+          >
+            <KeyRound className="h-4 w-4 ml-2" />
+            تغيير كلمة المرور
+          </Button>
+
           <Button
             variant={user.isActive ? "destructive" : "default"}
             size="sm"

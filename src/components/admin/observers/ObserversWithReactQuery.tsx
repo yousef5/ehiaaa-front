@@ -21,6 +21,13 @@ export function ObserversWithReactQuery() {
     page,
     limit,
 
+    // Search and filter state
+    searchQuery,
+    selectedCity,
+    selectedGovernorate,
+    filterOptions,
+    filteredCities,
+
     // State
     selectedObserver,
     isCreateDialogOpen,
@@ -53,6 +60,9 @@ export function ObserversWithReactQuery() {
     handlePrevPage,
     handleLimitChange,
     handleStatusChange,
+    handleSearchChange,
+    handleCityChange,
+    handleGovernorateChange,
     handleObserverCreated,
     handleObserverUpdated,
   } = useObserversData();
@@ -67,6 +77,11 @@ export function ObserversWithReactQuery() {
         status={status}
         page={page}
         limit={limit}
+        searchQuery={searchQuery}
+        selectedCity={selectedCity}
+        selectedGovernorate={selectedGovernorate}
+        filterOptions={filterOptions}
+        filteredCities={filteredCities}
         handleCreateObserver={handleCreateObserver}
         handleUpdateObserver={handleUpdateObserver}
         handleDeleteObserver={handleDeleteObserver}
@@ -76,6 +91,9 @@ export function ObserversWithReactQuery() {
         handlePrevPage={handlePrevPage}
         handleLimitChange={handleLimitChange}
         handleStatusChange={handleStatusChange}
+        handleSearchChange={handleSearchChange}
+        handleCityChange={handleCityChange}
+        handleGovernorateChange={handleGovernorateChange}
       />
 
       {/* Create Observer Dialog */}

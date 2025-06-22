@@ -16,6 +16,16 @@ interface ObserversContentProps {
   status: ObserverStatus;
   page: number;
   limit: number;
+  // Search and filter props
+  searchQuery: string;
+  selectedCity: string;
+  selectedGovernorate: string;
+  filterOptions: {
+    cities: { id: string; nameAr: string; governorateId: string }[];
+    governorates: { id: string; nameAr: string }[];
+  };
+  filteredCities: { id: string; nameAr: string; governorateId: string }[];
+  // Handlers
   handleCreateObserver: () => void;
   handleUpdateObserver: (observerId: string) => void;
   handleDeleteObserver: (observerId: string) => void;
@@ -25,6 +35,9 @@ interface ObserversContentProps {
   handlePrevPage: () => void;
   handleLimitChange: (value: string) => void;
   handleStatusChange: (value: ObserverStatus) => void;
+  handleSearchChange: (value: string) => void;
+  handleCityChange: (value: string) => void;
+  handleGovernorateChange: (value: string) => void;
 }
 
 export function ObserversContent({
@@ -35,6 +48,11 @@ export function ObserversContent({
   status,
   page,
   limit,
+  searchQuery,
+  selectedCity,
+  selectedGovernorate,
+  filterOptions,
+  filteredCities,
   handleCreateObserver,
   handleUpdateObserver,
   handleDeleteObserver,
@@ -44,6 +62,9 @@ export function ObserversContent({
   handlePrevPage,
   handleLimitChange,
   handleStatusChange,
+  handleSearchChange,
+  handleCityChange,
+  handleGovernorateChange,
 }: ObserversContentProps) {
   if (isLoading) {
     return (
@@ -74,8 +95,16 @@ export function ObserversContent({
           <ObserversFilters
             status={status}
             limit={limit}
+            searchQuery={searchQuery}
+            selectedCity={selectedCity}
+            selectedGovernorate={selectedGovernorate}
+            filterOptions={filterOptions}
+            filteredCities={filteredCities}
             onStatusChange={handleStatusChange}
             onLimitChange={handleLimitChange}
+            onSearchChange={handleSearchChange}
+            onCityChange={handleCityChange}
+            onGovernorateChange={handleGovernorateChange}
           />
         </div>
 

@@ -2,7 +2,7 @@ import { observerApi } from "@/lib/api";
 import { useQuickToast } from "@/stores/uiStore";
 import { Observer } from "@/types/observer";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ObserverStatus } from "../types";
 
 export function useObserversData() {
@@ -13,6 +13,9 @@ export function useObserversData() {
   const [status, setStatus] = useState<ObserverStatus>("all");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [selectedGovernorate, setSelectedGovernorate] = useState<string>("all");
   const [selectedObserver, setSelectedObserver] = useState<Observer | null>(
     null
   );
@@ -26,10 +29,10 @@ export function useObserversData() {
   const [selectedObserverId, setSelectedObserverId] = useState("");
 
   // Query for fetching observers
-  const { data, isLoading } = useQuery({
-    queryKey: ["observers", { status, page, limit }],
+  const { data: rawData, isLoading } = useQuery({
+    queryKey: ["observers", { status, page: 1, limit: 1000 }], // Fetch all data for client-side filtering
     queryFn: async () => {
-      const response = await observerApi.getAllObservers(status, page, limit);
+      const response = await observerApi.getAllObservers(status, 1, 1000);
       return {
         observers: response.observers || [],
         total: response.pagination?.totalItems || 0,
@@ -37,6 +40,118 @@ export function useObserversData() {
       };
     },
   });
+
+  // Client-side filtering
+  const filteredObservers = useMemo(() => {
+    if (!rawData?.observers) return [];
+
+    return rawData.observers.filter((observer) => {
+      // Search filter
+      if (searchQuery) {
+        const searchLower = searchQuery.toLowerCase();
+        const matchesName = observer.name?.toLowerCase().includes(searchLower);
+        const matchesEmail = observer.email
+          ?.toLowerCase()
+          .includes(searchLower);
+        const matchesPhone = observer.phone
+          ?.toLowerCase()
+          .includes(searchLower);
+        const matchesAddress = observer.address
+          ?.toLowerCase()
+          .includes(searchLower);
+
+        if (!matchesName && !matchesEmail && !matchesPhone && !matchesAddress) {
+          return false;
+        }
+      }
+
+      // City filter
+      if (selectedCity !== "all") {
+        if (!observer.city || observer.city.id !== selectedCity) {
+          return false;
+        }
+      }
+
+      // Governorate filter
+      if (selectedGovernorate !== "all") {
+        if (
+          !observer.city?.governorate ||
+          observer.city.governorate.id !== selectedGovernorate
+        ) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [rawData?.observers, searchQuery, selectedCity, selectedGovernorate]);
+
+  // Pagination for filtered results
+  const paginatedData = useMemo(() => {
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const observers = filteredObservers.slice(startIndex, endIndex);
+    const total = filteredObservers.length;
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      observers,
+      total,
+      totalPages,
+    };
+  }, [filteredObservers, page, limit]);
+
+  // Get unique cities and governorates for filter options (not needed since we get them from observers)
+
+  const filterOptions = useMemo(() => {
+    const citiesMap = new Map<
+      string,
+      {
+        id: string;
+        nameAr: string;
+        governorateId: string;
+      }
+    >();
+    const governoratesMap = new Map<string, { id: string; nameAr: string }>();
+
+    rawData?.observers.forEach((observer) => {
+      if (observer.city) {
+        // Use city ID as key to ensure uniqueness
+        citiesMap.set(observer.city.id, {
+          id: observer.city.id,
+          nameAr: observer.city.nameAr,
+          governorateId: observer.city.governorateId,
+        });
+
+        if (observer.city.governorate) {
+          // Use governorate ID as key to ensure uniqueness
+          governoratesMap.set(observer.city.governorate.id, {
+            id: observer.city.governorate.id,
+            nameAr: observer.city.governorate.nameAr,
+          });
+        }
+      }
+    });
+
+    return {
+      cities: Array.from(citiesMap.values()).sort((a, b) =>
+        a.nameAr.localeCompare(b.nameAr)
+      ),
+      governorates: Array.from(governoratesMap.values()).sort((a, b) =>
+        a.nameAr.localeCompare(b.nameAr)
+      ),
+    };
+  }, [rawData?.observers]);
+
+  // Filter cities based on selected governorate
+  const filteredCities = useMemo(() => {
+    if (selectedGovernorate === "all") {
+      return filterOptions.cities;
+    }
+    return filterOptions.cities.filter(
+      (city) => city.governorateId === selectedGovernorate
+    );
+  }, [filterOptions.cities, selectedGovernorate]);
 
   // Mutation for deleting an observer
   const deleteMutation = useMutation({
@@ -113,7 +228,9 @@ export function useObserversData() {
   };
 
   const handleDeleteObserver = (observerId: string) => {
-    const observer = data?.observers.find((obs) => obs.id === observerId);
+    const observer = paginatedData?.observers.find(
+      (obs) => obs.id === observerId
+    );
     if (observer) {
       setSelectedObserver(observer);
       setIsDeleteDialogOpen(true);
@@ -131,7 +248,9 @@ export function useObserversData() {
   };
 
   const handleToggleObserverStatus = (observerId: string) => {
-    const observer = data?.observers.find((obs) => obs.id === observerId);
+    const observer = paginatedData?.observers.find(
+      (obs) => obs.id === observerId
+    );
     if (observer) {
       setSelectedObserver(observer);
       setIsToggleStatusDialogOpen(true);
@@ -139,7 +258,9 @@ export function useObserversData() {
   };
 
   const handleUpdateAvatar = (observerId: string) => {
-    const observer = data?.observers.find((obs) => obs.id === observerId);
+    const observer = paginatedData?.observers.find(
+      (obs) => obs.id === observerId
+    );
     if (observer) {
       setSelectedObserver(observer);
       setIsUpdateAvatarDialogOpen(true);
@@ -188,7 +309,7 @@ export function useObserversData() {
   };
 
   const handleNextPage = () => {
-    if (page < (data?.totalPages || 1)) {
+    if (page < (paginatedData?.totalPages || 1)) {
       setPage(page + 1);
     }
   };
@@ -209,6 +330,37 @@ export function useObserversData() {
     setPage(1);
   };
 
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setPage(1);
+  };
+
+  const handleCityChange = (value: string) => {
+    setSelectedCity(value);
+    setPage(1);
+  };
+
+  const handleGovernorateChange = (value: string) => {
+    setSelectedGovernorate(value);
+    if (value === "all") {
+      setSelectedCity("all"); // Reset city when governorate changes to "all"
+    } else {
+      // Reset city selection when governorate changes
+      const citiesInGovernorate = filterOptions.cities.filter(
+        (city) => city.governorateId === value
+      );
+      if (citiesInGovernorate.length > 0 && selectedCity !== "all") {
+        const cityExists = citiesInGovernorate.some(
+          (city) => city.id === selectedCity
+        );
+        if (!cityExists) {
+          setSelectedCity("all");
+        }
+      }
+    }
+    setPage(1);
+  };
+
   const isDeleting = deleteMutation.isPending;
   const isTogglingStatus =
     activateMutation.isPending || deactivateMutation.isPending;
@@ -216,13 +368,20 @@ export function useObserversData() {
 
   return {
     // Data
-    observers: data?.observers || [],
-    total: data?.total || 0,
-    totalPages: data?.totalPages || 1,
+    observers: paginatedData?.observers || [],
+    total: paginatedData?.total || 0,
+    totalPages: paginatedData?.totalPages || 1,
     isLoading,
     status,
     page,
     limit,
+
+    // Search and filter state
+    searchQuery,
+    selectedCity,
+    selectedGovernorate,
+    filterOptions,
+    filteredCities,
 
     // State
     selectedObserver,
@@ -256,6 +415,9 @@ export function useObserversData() {
     handlePrevPage,
     handleLimitChange,
     handleStatusChange,
+    handleSearchChange,
+    handleCityChange,
+    handleGovernorateChange,
     handleObserverCreated,
     handleObserverUpdated,
   };

@@ -34,6 +34,8 @@ export function UsersList() {
     approval: "all",
     userType: "all",
     search: "",
+    cityId: undefined,
+    governorateId: undefined,
   });
 
   // State for delete dialog

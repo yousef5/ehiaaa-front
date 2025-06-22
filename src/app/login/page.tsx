@@ -38,7 +38,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useAuthActions, useIsAuthenticated } from "@/stores/authStore";
+import {
+  useAuthActions,
+  useAuthStore,
+  useIsAuthenticated,
+} from "@/stores/authStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AlertCircle,
@@ -127,9 +131,7 @@ export default function LoginPage() {
         description: "مرحباً بك في منصة إحياء",
       });
 
-      setTimeout(() => {
-        router.push("/admin/dashboard");
-      }, 1500);
+      handleRedirect(useAuthStore.getState().user);
     } catch (error: unknown) {
       const errorMessage =
         (error as Error).message ||
@@ -143,6 +145,45 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   }
+
+  // Helper function to handle redirect logic
+  const handleRedirect = (
+    currentUser: {
+      role?: string;
+      userType?: string;
+      dashboardRoute?: string;
+    } | null
+  ) => {
+    console.log("Redirecting user:", currentUser);
+
+    // Redirect based on user type
+    if (currentUser?.userType === "admin") {
+      console.log("Redirecting admin to admin dashboard");
+      router.push("/admin/dashboard");
+    } else if (
+      currentUser?.userType?.toLowerCase() === "hospital" ||
+      currentUser?.userType?.toLowerCase() === "bloodbank" ||
+      currentUser?.userType?.toLowerCase() === "blood_bank"
+    ) {
+      console.log("Redirecting hospital user to hospital dashboard");
+      router.push("/hospital/dashboard");
+    } else if (
+      currentUser?.userType?.toLowerCase() === "user" ||
+      currentUser?.userType?.toLowerCase() === "donor"
+    ) {
+      console.log("Redirecting user to user dashboard");
+      router.push("/dashboard");
+    } else if (currentUser?.dashboardRoute) {
+      console.log(
+        "Redirecting to dashboard route:",
+        currentUser.dashboardRoute
+      );
+      router.push(currentUser.dashboardRoute);
+    } else {
+      console.log("Redirecting to home page");
+      router.push("/");
+    }
+  };
 
   // Show logo loading screen while checking authentication or redirecting after success
   if (isCheckingAuth || success) {

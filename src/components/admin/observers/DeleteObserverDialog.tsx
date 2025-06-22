@@ -40,7 +40,7 @@ export default function DeleteObserverDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md p-0">
+      <DialogContent className="max-w-md p-0" dir="rtl">
         <DialogHeader className="px-6 pt-6 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

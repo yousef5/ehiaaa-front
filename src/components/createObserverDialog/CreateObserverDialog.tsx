@@ -188,7 +188,7 @@ export default function CreateObserverDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent size="xl" className=" p-0 ">
+      <DialogContent size="xl" className=" p-0 " dir="rtl">
         <DialogHeader className="px-6 pt-6 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

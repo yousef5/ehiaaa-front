@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import { AxiosError, AxiosInstance } from "axios";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 // =======================================================================================
 // 🔐 AUTHENTICATION STORE - Zustand Global State
@@ -22,6 +22,8 @@ export interface User {
   phone?: string;
   bloodType?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
   role: "donor" | "admin" | "medical_staff";
+  userType?: string;
+  dashboardRoute?: string;
   avatar?: string;
   dateOfBirth?: string;
   address?: {
@@ -167,6 +169,8 @@ export const useAuthStore = create<AuthState>()(
                 | "O+"
                 | "O-") || "unknown",
             role: data.user.userType as "donor" | "admin" | "medical_staff",
+            userType: data.user.userType,
+            dashboardRoute: data.userTypeInfo.dashboardRoute,
             avatar: data.user.avatar,
             dateOfBirth: data.user.birthDate,
             address: data.user.address

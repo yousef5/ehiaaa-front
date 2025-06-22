@@ -292,6 +292,8 @@ export interface UserFilters {
   approval: "pending" | "approved" | "rejected" | "all";
   userType: "user" | "hospital" | "bloodbank" | "all";
   search?: string;
+  cityId?: string;
+  governorateId?: string;
 }
 
 export interface UserSummary {
@@ -420,8 +422,16 @@ export const usersApi = {
   getAllUsersWithFilters: async (
     filters: UserFilters
   ): Promise<UsersPaginatedResponse> => {
+    // Filter out empty strings and undefined values for API call
+    const apiParams = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== "") {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as Record<string, string | number>);
+
     const response = await axiosInstance.get("/admin/users", {
-      params: filters,
+      params: apiParams,
     });
     return response.data;
   },
@@ -522,7 +532,7 @@ export const usersApi = {
   },
 
   /**
-   * Upload user avatar
+   * Upload user avatar (admin)
    */
   uploadUserAvatar: async (
     userId: string,
@@ -544,7 +554,7 @@ export const usersApi = {
   },
 
   /**
-   * Update user avatar
+   * Update user avatar (admin)
    */
   updateUserAvatar: async (
     userId: string,
@@ -566,7 +576,7 @@ export const usersApi = {
   },
 
   /**
-   * Remove user avatar
+   * Remove user avatar (admin)
    */
   removeUserAvatar: async (
     userId: string
@@ -576,4 +586,540 @@ export const usersApi = {
     );
     return response.data;
   },
+
+  /**
+   * Upload own avatar (self-service)
+   */
+  uploadOwnAvatar: async (
+    file: File,
+    userId: string
+  ): Promise<{ message: string; user: UserType }> => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    const response = await axiosInstance.post(
+      `/admin/users/${userId}/avatar`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  },
+
+  /**
+   * Update own avatar (self-service)
+   */
+  updateOwnAvatar: async (
+    file: File,
+    userId: string
+  ): Promise<{ message: string; user: UserType }> => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    const response = await axiosInstance.put(
+      `/admin/users/${userId}/avatar`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  },
+
+  /**
+   * Remove own avatar (self-service)
+   */
+  removeOwnAvatar: async (
+    userId: string
+  ): Promise<{ message: string; user: UserType }> => {
+    const response = await axiosInstance.delete(
+      `/admin/users/${userId}/avatar`
+    );
+    return response.data;
+  },
+
+  /**
+   * Change user password (admin/observer)
+   */
+  changeUserPassword: async (
+    userId: string,
+    newPassword: string,
+    reason?: string
+  ): Promise<{ message: string; user: UserType }> => {
+    const response = await axiosInstance.patch(
+      `/admin/users/${userId}/password`,
+      {
+        newPassword,
+        reason,
+      }
+    );
+    return response.data;
+  },
+
+  /**
+   * Change own password (self-service) - simplified version
+   */
+  changeOwnPassword: async (
+    userId: string,
+    newPassword: string,
+    reason?: string
+  ): Promise<{ message: string; user: UserType }> => {
+    const response = await axiosInstance.patch(
+      `/admin/users/${userId}/password`,
+      {
+        newPassword,
+        ...(reason && { reason }),
+      }
+    );
+    return response.data;
+  },
+};
+
+// =======================================================================================
+// 👁️ OBSERVER DASHBOARD API
+// =======================================================================================
+export const observerDashboardApi = {
+  /**
+   * Get cases statistics in observer area
+   */
+  getCasesStatistics: async () => {
+    const response = await axiosInstance.get(
+      "/cases/observer/my-area/statistics"
+    );
+    return response.data;
+  },
+
+  /**
+   * Get users statistics in observer area
+   */
+  getUsersStatistics: async () => {
+    const response = await axiosInstance.get(
+      "/users/observer/my-area/statistics"
+    );
+    return response.data;
+  },
+};
+
+// =======================================================================================
+// 👁️ OBSERVER USERS API
+// =======================================================================================
+export interface ObserverUsersFilters {
+  page: number;
+  limit: number;
+  userType?: "hospital" | "donor" | "bloodbank" | "all";
+  status?: "active" | "inactive" | "all";
+  search?: string;
+}
+
+export interface ObserverUser {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  userType: "hospital" | "donor" | "bloodbank";
+  status: "active" | "inactive";
+  avatar?: string;
+  city?: {
+    nameAr: string;
+    nameEn: string;
+  };
+  createdAt: string;
+  isVerified?: boolean;
+}
+
+export interface ObserverUsersResponse {
+  data: ObserverUser[];
+  limit: number;
+  page: number;
+  total: number;
+}
+
+export const observerUsersApi = {
+  /**
+   * Get users in observer area with pagination and filtering
+   */
+  getObserverAreaUsers: async (
+    filters: ObserverUsersFilters
+  ): Promise<ObserverUsersResponse> => {
+    const response = await axiosInstance.get("/users/observer/my-area", {
+      params: filters,
+    });
+
+    return response.data;
+  },
+
+  /**
+   * Get user details by ID
+   */
+  getUserById: async (userId: string): Promise<UserFullData["user"]> => {
+    const response = await axiosInstance.get(`/users/${userId}`);
+    console.log(response.data);
+    return response.data;
+  },
+};
+
+// =======================================================================================
+// 👁️ OBSERVER CASES API
+// =======================================================================================
+export interface ObserverCasesFilters {
+  page: number;
+  limit: number;
+  status?: string;
+  bloodType?: string;
+  donationType?: string;
+}
+
+export interface ObserverCasesPaginatedResponse {
+  cases: import("@/lib/cases-api").CaseResponse[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+  observerArea: {
+    cityId: string;
+    cityName: string;
+    cityNameAr: string;
+    governorateId: string;
+    governorateName: string;
+    governorateNameAr: string;
+    citiesWithoutObservers: number;
+    citiesWithoutObserversList: Array<{
+      id: string;
+      nameEn: string;
+      nameAr: string;
+    }>;
+  };
+}
+
+export const observerCasesApi = {
+  /**
+   * Get cases in observer area with pagination and filtering
+   */
+  getObserverAreaCases: async (
+    filters: ObserverCasesFilters
+  ): Promise<ObserverCasesPaginatedResponse> => {
+    const response = await axiosInstance.get("/cases/observer/my-area", {
+      params: filters,
+    });
+    return response.data;
+  },
+};
+
+// User donation data types
+export interface UserDonationInfo {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  bloodType: string;
+  avatar: string;
+}
+
+export interface DonationStats {
+  totalDonations: number;
+  completedDonations: number;
+  pendingDonations: number;
+  refusedDonations: number;
+  totalQuantityDonated: number;
+}
+
+export interface NextEligibilityInfo {
+  isEligible: boolean;
+  reason: string;
+  daysSinceLastDonation: number | null;
+  minimumWaitDays: number;
+}
+
+export interface UserDonation {
+  id: string;
+  caseId: string;
+  donorId: string;
+  quantity: number;
+  notes: string | null;
+  donationDate: Date | null;
+  scheduledDate: Date | null;
+  status: string;
+  statusNotes: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  case?: {
+    id: string;
+    patientName: string;
+    bloodType: string;
+    hospital: {
+      name: string;
+    };
+  };
+}
+
+export interface UserDonationData {
+  user: UserDonationInfo;
+  donations: UserDonation[];
+  donationStats: DonationStats;
+  nextEligibilityDate: Date | null;
+  nextEligibilityInfo: NextEligibilityInfo;
+  compatibleBloodTypes: string[];
+}
+
+export interface UserDonationDataResponse {
+  success: boolean;
+  message: string;
+  userDonationData: UserDonationData;
+}
+
+// Add to the existing API object
+export const donationsApi = {
+  /**
+   * Get comprehensive user donation data
+   */
+  async getUserDonationData(userId: string): Promise<UserDonationData> {
+    const response = await axiosInstance.get<UserDonationDataResponse>(
+      `/donations/user/${userId}`
+    );
+    return response.data.userDonationData;
+  },
+};
+
+// User Profile Types
+export interface IdentityPaperResponse {
+  type: string;
+  number: string;
+  issuedBy: string;
+  issuedDate: string;
+  expiryDate: string;
+  frontImageUrl?: string;
+  backImageUrl?: string;
+  verified: boolean;
+  verificationNotes?: string;
+  verifiedBy?: string;
+  verifiedAt?: string;
+}
+
+export interface CityResponse {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  governorate?: {
+    id: string;
+    nameEn: string;
+    nameAr: string;
+  };
+}
+
+export interface UserDataResponse {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  avatar: string;
+  birthDate: string;
+  gender: "male" | "female";
+  bloodType: string;
+  weight: number;
+  height: number;
+  userType: string;
+  role: string;
+  isActive: boolean;
+  verificationStatus: string;
+  profilePictureUrl?: string;
+  lastDonationDate?: string;
+  nextEligibleDonationDate?: string;
+  totalDonations: number;
+  city: CityResponse;
+  identityPapers: IdentityPaperResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserDonationResponse {
+  id: string;
+  donationType: string;
+  donationDate: string;
+  status: string;
+  notes?: string;
+  bloodBags: number;
+  case?: {
+    id: string;
+    patientName: string;
+    bloodType: string;
+    hospitalName: string;
+  };
+  createdAt: string;
+}
+
+export interface ActiveCaseResponse {
+  id: string;
+  patientName: string;
+  patientAge: number;
+  bloodType: string;
+  donationType: string;
+  bagsNeeded: number;
+  currentDonations: number;
+  remainingBags: number;
+  status: string;
+  description?: string;
+  urgencyLevel: "low" | "medium" | "high" | "critical";
+  hospital: {
+    id: string;
+    name: string;
+    phone?: string;
+    address?: string;
+    city: CityResponse;
+  };
+  createdAt: string;
+  lastUpdated: string;
+}
+
+export interface UserProfileResponseDto {
+  userData: UserDataResponse;
+  donations: UserDonationResponse[];
+  activeCasesInCity: ActiveCaseResponse[];
+  statistics: {
+    totalDonations: number;
+    completedDonations: number;
+    pendingDonations: number;
+    activeCasesInCity: number;
+    daysUntilNextEligible: number;
+    canDonateToday: boolean;
+  };
+  eligibility: {
+    canDonate: boolean;
+    nextEligibleDate?: string;
+    reasonIfNotEligible?: string;
+    compatibleBloodTypes: string[];
+  };
+}
+
+/**
+ * Get full user profile including donations and active cases
+ */
+export const getUserFullProfile = async (): Promise<UserProfileResponseDto> => {
+  const response = await axiosInstance.get<UserProfileResponseDto>(
+    "/users/profile/full"
+  );
+  return response.data;
+};
+
+// =======================================================================================
+// 📊 ADMIN DASHBOARD STATISTICS API
+// =======================================================================================
+export interface DashboardStatistics {
+  users: {
+    totalUsers: number;
+    activeUsers: number;
+    inactiveUsers: number;
+    totalHospitals: number;
+    activeHospitals: number;
+    inactiveHospitals: number;
+    totalBloodBanks: number;
+    activeBloodBanks: number;
+    inactiveBloodBanks: number;
+    totalObservers: number;
+    activeObservers: number;
+    inactiveObservers: number;
+  };
+  locations: {
+    totalGovernorates: number;
+    totalCities: number;
+  };
+  donations: {
+    totalDonations: number;
+  };
+  cases: {
+    totalCases: number;
+    activeCases: number;
+    pendingCases: number;
+  };
+  requestedBy: string;
+  requestedAt: string;
+}
+
+export const getDashboardStatistics =
+  async (): Promise<DashboardStatistics> => {
+    const response = await axiosInstance.get(
+      "admin/users/dashboard/statistics"
+    );
+    return response.data;
+  };
+
+// =======================================================================================
+// 📋 ADMIN CASES API
+// =======================================================================================
+export interface AdminCasesFilters {
+  page: number;
+  limit: number;
+  status?: string;
+  hospitalId?: string;
+  bloodType?: string;
+  donationType?: string;
+  cityId?: string;
+  governorateId?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  isActive?: boolean;
+}
+
+export interface AdminCasesSummary {
+  totalCases: number;
+  activeCases: number;
+  pendingCases: number;
+  approvedCases: number;
+  rejectedCases: number;
+  completedCases: number;
+}
+
+export interface AdminCasesPaginatedResponse {
+  cases: import("@/lib/cases-api").CaseResponse[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+  filters: {
+    status: string | null;
+    hospitalId: string | null;
+    bloodType: string | null;
+    donationType: string | null;
+    cityId: string | null;
+    governorateId: string | null;
+    search: string | null;
+    dateFrom: string | null;
+    dateTo: string | null;
+    isActive: boolean | null;
+  };
+  summary: AdminCasesSummary;
+  requestedBy: string;
+  requestedAt: string;
+}
+
+export const getAllCasesAdmin = async (
+  filters: AdminCasesFilters
+): Promise<AdminCasesPaginatedResponse> => {
+  const queryParams = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      queryParams.append(key, value.toString());
+    }
+  });
+
+  const response = await axiosInstance.get(
+    `/cases/admin/all?${queryParams.toString()}`
+  );
+  return response.data;
 };

@@ -19,12 +19,14 @@
 // - Modern animation patterns with reduced motion support
 // =======================================================================================
 
-import Hero from "@/components/home/Hero";
-import Services from "@/components/home/Services";
+import Actors from "@/components/home/Actors";
 import Benefits from "@/components/home/Benefits";
 import CTA from "@/components/home/CTA";
 import Footer from "@/components/home/Footer";
-import { useEffect, useState, useRef } from "react";
+import Hero from "@/components/home/Hero";
+import Services from "@/components/home/Services";
+import SocialMedia from "@/components/home/SocialMedia";
+import { useEffect, useRef, useState } from "react";
 
 // =======================================================================================
 // 🎯 SECTION CONFIGURATION
@@ -49,6 +51,20 @@ const sections = [
     component: Benefits,
     name: "الفوائد",
     delay: 400,
+    priority: "medium",
+  },
+  {
+    id: "social",
+    component: SocialMedia,
+    name: "التواصل الاجتماعي",
+    delay: 500,
+    priority: "medium",
+  },
+  {
+    id: "actors",
+    component: Actors,
+    name: "شركاء الإنقاذ",
+    delay: 550,
     priority: "medium",
   },
   {
@@ -308,6 +324,26 @@ const HomePage = () => {
             name="الفوائد"
           >
             <Benefits />
+          </SectionWrapper>
+
+          {/* Social Media Section */}
+          <SectionWrapper
+            id="social"
+            delay={500}
+            priority="medium"
+            name="التواصل الاجتماعي"
+          >
+            <SocialMedia />
+          </SectionWrapper>
+
+          {/* Actors Section */}
+          <SectionWrapper
+            id="actors"
+            delay={550}
+            priority="medium"
+            name="شركاء الإنقاذ"
+          >
+            <Actors />
           </SectionWrapper>
 
           {/* Call to Action Section */}

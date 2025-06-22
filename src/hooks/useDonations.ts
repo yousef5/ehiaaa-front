@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { donationsApi, type UserDonationData } from "@/lib/api";
 import { queryKeys } from "@/lib/query-client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // =======================================================================================
 // 🩸 BLOOD DONATION HOOKS - React Query Integration
@@ -134,6 +135,23 @@ export const useBloodInventory = () => {
   });
 };
 
+// Query keys
+export const donationKeys = {
+  all: ["donations"] as const,
+  user: (userId: string) => [...donationKeys.all, "user", userId] as const,
+};
+
+// Hook to get user donation data
+export function useUserDonationData(userId?: string) {
+  return useQuery({
+    queryKey: donationKeys.user(userId || ""),
+    queryFn: () => donationsApi.getUserDonationData(userId!),
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
+}
+
 // =======================================================================================
 // ✏️ MUTATION HOOKS - Data Modifications
 // =======================================================================================
@@ -237,3 +255,75 @@ export const useCancelDonation = () => {
     },
   });
 };
+
+// Utility function to calculate donation statistics
+export function calculateDonationProgress(
+  donationStats: UserDonationData["donationStats"]
+) {
+  const {
+    totalDonations,
+    completedDonations,
+    pendingDonations,
+    refusedDonations,
+  } = donationStats;
+
+  return {
+    completionRate:
+      totalDonations > 0
+        ? Math.round((completedDonations / totalDonations) * 100)
+        : 0,
+    pendingRate:
+      totalDonations > 0
+        ? Math.round((pendingDonations / totalDonations) * 100)
+        : 0,
+    refusalRate:
+      totalDonations > 0
+        ? Math.round((refusedDonations / totalDonations) * 100)
+        : 0,
+    totalBags: Math.floor(donationStats.totalQuantityDonated / 450), // Assuming 450ml per bag
+  };
+}
+
+// Utility function to get donation status badge info
+export function getDonationStatusInfo(status: string) {
+  const statusMap: Record<string, { label: string; className: string }> = {
+    signed: {
+      label: "مسجل",
+      className:
+        "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400",
+    },
+    confirmed: {
+      label: "مؤكد",
+      className:
+        "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-400",
+    },
+    completed: {
+      label: "مكتمل",
+      className:
+        "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400",
+    },
+    pending: {
+      label: "معلق",
+      className:
+        "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400",
+    },
+    refused: {
+      label: "مرفوض",
+      className:
+        "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400",
+    },
+    cancelled: {
+      label: "ملغي",
+      className:
+        "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400",
+    },
+  };
+
+  return (
+    statusMap[status] || {
+      label: status,
+      className:
+        "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400",
+    }
+  );
+}

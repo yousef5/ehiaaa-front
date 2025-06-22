@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ChangeUserPasswordDialog } from "./ChangeUserPasswordDialog";
 import { UserDocuments } from "./UserDocuments";
 import { UserHeader } from "./UserHeader";
 import { UserPersonalInfo } from "./UserPersonalInfo";
@@ -47,6 +48,7 @@ export function UserDetail({ userId }: UserDetailProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<{
     id: string;
     name: string;
@@ -111,6 +113,24 @@ export function UserDetail({ userId }: UserDetailProps) {
     await handleUserAction(action, reason);
     setStatusDialogOpen(false);
     setSelectedUser(null);
+  };
+
+  const handlePasswordChange = async (newPassword: string, reason?: string) => {
+    setIsLoading(true);
+    try {
+      await usersApi.changeUserPassword(userId, newPassword, reason);
+      toast.success("تم تغيير كلمة المرور بنجاح");
+      refetch();
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error && "response" in error
+          ? (error as { response?: { data?: { message?: string } } })?.response
+              ?.data?.message
+          : "حدث خطأ أثناء تغيير كلمة المرور";
+      toast.error(errorMessage || "حدث خطأ أثناء تغيير كلمة المرور");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (error) {
@@ -452,6 +472,7 @@ export function UserDetail({ userId }: UserDetailProps) {
           onAvatarUpdate={() => {
             refetch();
           }}
+          onPasswordChange={() => setPasswordDialogOpen(true)}
           isLoading={isLoading}
           router={router}
         />
@@ -569,6 +590,15 @@ export function UserDetail({ userId }: UserDetailProps) {
         onOpenChange={setStatusDialogOpen}
         onConfirm={handleStatusDialogConfirm}
         user={selectedUser}
+        isLoading={isLoading}
+      />
+
+      {/* Change Password Dialog */}
+      <ChangeUserPasswordDialog
+        isOpen={passwordDialogOpen}
+        onOpenChange={setPasswordDialogOpen}
+        user={user ? { id: user.id, name: user.name } : null}
+        onConfirm={handlePasswordChange}
         isLoading={isLoading}
       />
     </div>

@@ -20,30 +20,8 @@
 // - Modern brand identity with professional styling
 // =======================================================================================
 
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
-import {
-  User,
-  Menu,
-  X,
-  Home,
-  Info,
-  Heart,
-  Phone,
-  LogOut,
-  Settings,
-  LayoutDashboard,
-  ChevronDown,
-} from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import {
-  useIsAuthenticated,
-  useUser,
-  useAuthActions,
-} from "@/stores/authStore";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +30,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  useAuthActions,
+  useIsAuthenticated,
+  useUser,
+} from "@/stores/authStore";
+import {
+  ChevronDown,
+  Heart,
+  Home,
+  Info,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Phone,
+  Settings,
+  User,
+  X,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // =======================================================================================
 // 🎯 NAVIGATION ITEMS CONFIGURATION
@@ -322,11 +322,15 @@ const Header = () => {
                             src={`${
                               process.env.NEXT_PUBLIC_API_URL ||
                               "http://localhost:3000"
-                            }/public/avatars/${user.avatar}`}
+                            }/public/${
+                              user.avatar?.startsWith("avatars/")
+                                ? user.avatar
+                                : `avatars/${user.avatar}`
+                            }`}
                             alt={user.name || "مستخدم"}
                             width={24}
                             height={24}
-                            className="h-full w-full object-cover"
+                            className="h-6 w-6 object-cover"
                             onError={(e) => {
                               // Fallback to User icon if image fails to load
                               const target = e.target as HTMLImageElement;
@@ -365,6 +369,48 @@ const Header = () => {
                       <DropdownMenuItem asChild>
                         <Link
                           href="/admin/dashboard"
+                          className="flex items-center gap-2 w-full cursor-pointer"
+                        >
+                          <LayoutDashboard className="h-4 w-4" />
+                          <span>لوحة التحكم</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+
+                    {/* Dashboard Link for Hospital/Blood Bank */}
+                    {(user?.userType?.toLowerCase() === "hospital" ||
+                      user?.userType?.toLowerCase() === "bloodbank" ||
+                      user?.userType?.toLowerCase() === "blood_bank") && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/hospital/dashboard"
+                          className="flex items-center gap-2 w-full cursor-pointer"
+                        >
+                          <LayoutDashboard className="h-4 w-4" />
+                          <span>لوحة التحكم</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+
+                    {/* Dashboard Link for Observer */}
+                    {user?.userType?.toLowerCase() === "observer" && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/observer/dashboard"
+                          className="flex items-center gap-2 w-full cursor-pointer"
+                        >
+                          <LayoutDashboard className="h-4 w-4" />
+                          <span>لوحة التحكم</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+
+                    {/* Dashboard Link for Regular Users/Donors */}
+                    {(user?.userType?.toLowerCase() === "user" ||
+                      user?.userType?.toLowerCase() === "donor") && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/dashboard"
                           className="flex items-center gap-2 w-full cursor-pointer"
                         >
                           <LayoutDashboard className="h-4 w-4" />
