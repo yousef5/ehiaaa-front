@@ -81,14 +81,11 @@ const QRCodeDisplay = ({ value }: { value: string }) => {
 // The actual card display component
 const DonorCardDisplay = forwardRef<HTMLDivElement, DonorCardDisplayProps>(
   ({ userId, userName, userAvatar }, ref) => {
-    const getBackendUrl = () => {
-      return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    };
-
     const getAvatarUrl = (avatar?: string) => {
       if (!avatar) return "/avatars/avatar1.png";
       if (avatar.startsWith("http")) return avatar;
-      return `${getBackendUrl()}/public/${avatar}`;
+      // For local public folder images, ensure path starts with /
+      return avatar.startsWith("/") ? avatar : `/${avatar}`;
     };
 
     return (

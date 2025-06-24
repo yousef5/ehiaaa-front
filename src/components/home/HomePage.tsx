@@ -26,6 +26,7 @@ import Footer from "@/components/home/Footer";
 import Hero from "@/components/home/Hero";
 import Services from "@/components/home/Services";
 import SocialMedia from "@/components/home/SocialMedia";
+import TrustAndVerification from "@/components/home/TrustAndVerification";
 import { useEffect, useRef, useState } from "react";
 
 // =======================================================================================
@@ -58,6 +59,13 @@ const sections = [
     component: SocialMedia,
     name: "التواصل الاجتماعي",
     delay: 500,
+    priority: "medium",
+  },
+  {
+    id: "trust",
+    component: TrustAndVerification,
+    name: "المصداقية والشفافية",
+    delay: 525,
     priority: "medium",
   },
   {
@@ -316,16 +324,6 @@ const HomePage = () => {
             <Services />
           </SectionWrapper>
 
-          {/* Benefits Section */}
-          <SectionWrapper
-            id="benefits"
-            delay={400}
-            priority="medium"
-            name="الفوائد"
-          >
-            <Benefits />
-          </SectionWrapper>
-
           {/* Social Media Section */}
           <SectionWrapper
             id="social"
@@ -336,6 +334,16 @@ const HomePage = () => {
             <SocialMedia />
           </SectionWrapper>
 
+          {/* Trust and Verification Section */}
+          <SectionWrapper
+            id="trust"
+            delay={525}
+            priority="medium"
+            name="المصداقية والشفافية"
+          >
+            <TrustAndVerification />
+          </SectionWrapper>
+
           {/* Actors Section */}
           <SectionWrapper
             id="actors"
@@ -344,11 +352,6 @@ const HomePage = () => {
             name="شركاء الإنقاذ"
           >
             <Actors />
-          </SectionWrapper>
-
-          {/* Call to Action Section */}
-          <SectionWrapper id="cta" delay={600} priority="low" name="دعوة للعمل">
-            <CTA />
           </SectionWrapper>
         </main>
 

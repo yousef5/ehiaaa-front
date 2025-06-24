@@ -37,13 +37,11 @@ import {
 } from "@/stores/authStore";
 import {
   ChevronDown,
-  Heart,
   Home,
   Info,
   LayoutDashboard,
   LogOut,
   Menu,
-  Phone,
   Settings,
   User,
   X,
@@ -64,22 +62,10 @@ const navigationItems = [
     description: "العودة إلى الصفحة الرئيسية",
   },
   {
-    href: "/about",
-    label: "من نحن",
+    href: "/documentation",
+    label: "التوثيق",
     icon: Info,
-    description: "تعرف على مهمتنا ورؤيتنا",
-  },
-  {
-    href: "/donate",
-    label: "تبرع الآن",
-    icon: Heart,
-    description: "ابدأ رحلة التبرع بالدم",
-  },
-  {
-    href: "/contact",
-    label: "اتصل بنا",
-    icon: Phone,
-    description: "تواصل معنا للاستفسارات",
+    description: "دليل استخدام المنصة والتوثيق",
   },
 ];
 

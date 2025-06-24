@@ -423,7 +423,7 @@ export default function LoginPage() {
             </Form>
 
             {/* Footer Links */}
-            <div className="mt-6 text-center">
+            <div className="mt-6 text-center space-y-3">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 ليس لديك حساب؟{" "}
                 <Button
@@ -434,6 +434,16 @@ export default function LoginPage() {
                   إنشاء حساب جديد
                 </Button>
               </p>
+
+              <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 border-gray-200 dark:border-gray-600 hover:border-emerald-300"
+                  onClick={() => router.push("/")}
+                >
+                  العودة للصفحة الرئيسية
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

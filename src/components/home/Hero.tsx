@@ -1,242 +1,190 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  ChevronRight,
-  Plus,
-  ArrowRight,
-  Heart,
-  Bell,
-  Shield,
-  MessageCircle,
-} from "lucide-react";
+import { ChevronDown, Heart, Sparkles, Star, Users } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-
-// Define avatar images array
-const avatars = [
-  "/avatars/avatar1.png",
-  "/avatars/avatar2.png",
-  "/avatars/avatar3.png",
-  "/avatars/avatar4.png",
-];
 
 const Hero = () => {
-  // Animation for features cycling
-  const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
-  const [typedText, setTypedText] = useState("");
-  const [typedSecondary, setTypedSecondary] = useState("");
-  const [isFirstLineDone, setIsFirstLineDone] = useState(false);
-  const [isCursorVisible, setIsCursorVisible] = useState(true);
-  const firstText = "تبرع بالدم،";
-  const secondText = "أنقذ حياة";
-  const typingSpeedMs = 100;
 
-  const features = [
-    "تسجيل بياناتك وفصيلة الدم الخاصة بك",
-    "استلام إشعارات فورية بالحالات القريبة",
-    "متابعة الحملات والمبادرات المجتمعية",
-    "التواصل مع الفرق الطبية بطريقة مباشرة",
-  ];
-
-  const featureIcons = [
-    <Shield key="shield" className="h-5 w-5 text-emerald-500" />,
-    <Bell key="bell" className="h-5 w-5 text-emerald-500" />,
-    <Heart key="heart" className="h-5 w-5 text-emerald-500" />,
-    <MessageCircle key="message" className="h-5 w-5 text-emerald-500" />,
-  ];
-
-  // Cursor blinking animation
-  useEffect(() => {
-    const blinkInterval = setInterval(() => {
-      setIsCursorVisible((prev) => !prev);
-    }, 500);
-
-    return () => clearInterval(blinkInterval);
-  }, []);
-
-  // First line typing animation
-  useEffect(() => {
-    if (typedText.length < firstText.length) {
-      const timeout = setTimeout(() => {
-        setTypedText(firstText.slice(0, typedText.length + 1));
-      }, typingSpeedMs);
-
-      return () => clearTimeout(timeout);
-    } else if (!isFirstLineDone) {
-      setIsFirstLineDone(true);
-    }
-  }, [typedText, isFirstLineDone]);
-
-  // Second line typing animation, starts after first line is done
-  useEffect(() => {
-    if (isFirstLineDone && typedSecondary.length < secondText.length) {
-      const timeout = setTimeout(() => {
-        setTypedSecondary(secondText.slice(0, typedSecondary.length + 1));
-      }, typingSpeedMs);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [typedSecondary, isFirstLineDone]);
-
-  // Features cycling animation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentFeatureIndex((prev) => (prev + 1) % features.length);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center relative bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
-          {/* Text Content */}
-          <div className="md:w-1/2 text-right space-y-8 md:pr-8">
-            <div className="inline-block px-4 py-2 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-medium mb-2">
-              مبادرة تبرع بالدم
-            </div>
-            {/* Animated heading with typing effect */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-emerald-800 dark:text-emerald-400 leading-tight min-h-[140px] md:min-h-[160px]">
-              <div className="flex items-center h-[60px] md:h-[80px]">
-                <span>{typedText}</span>
-                {typedText.length < firstText.length && (
-                  <span
-                    className={`inline-block w-[4px] h-[50px] md:h-[60px] bg-emerald-600 dark:bg-emerald-400 ml-1 ${
-                      isCursorVisible ? "opacity-100" : "opacity-0"
-                    }`}
-                  ></span>
-                )}
-              </div>
-              <div className="flex items-center h-[60px] md:h-[80px]">
-                <span className="text-yellow-500">{typedSecondary}</span>
-                {isFirstLineDone &&
-                  typedSecondary.length < secondText.length && (
-                    <span
-                      className={`inline-block w-[4px] h-[50px] md:h-[60px] bg-yellow-500 ml-1 ${
-                        isCursorVisible ? "opacity-100" : "opacity-0"
-                      }`}
-                    ></span>
-                  )}
-              </div>
-            </h1>
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-emerald-950/20">
+      {/* Simple Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 right-20 w-40 h-40 bg-emerald-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 left-20 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-emerald-400/5 to-blue-400/5 rounded-full blur-3xl"></div>
+      </div>
 
-            {/* Creative animated description with highlight box */}
-            <div className="bg-white dark:bg-gray-800/50 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 shadow-md backdrop-blur-sm">
-              <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-                <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-                  تطبيق &quot;إحياء&quot;
-                </span>{" "}
-                هو منصة رقمية متكاملة تهدف إلى تسهيل عملية التبرع بالدم من خلال
-                ربط المتبرعين بالحالات الحرجة التي تحتاج إلى نقل دم بشكل عاجل،
-                وذلك بطريقة ذكية وآمنة.
+      {/* Simple Container */}
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen py-20">
+          {/* Content Section */}
+          <div
+            className={`space-y-8 text-center lg:text-right transition-all duration-1000 transform 
+            
+            `}
+          >
+            {/* Hero Badge */}
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-full border border-emerald-200 dark:border-emerald-700 backdrop-blur-sm">
+              <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-emerald-700 dark:text-emerald-300 font-semibold">
+                منصة إحياء للتبرع بالدم
+              </span>
+            </div>
+
+            {/* Islamic Introduction + Quranic Verse */}
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 border border-emerald-200/50 dark:border-emerald-700/50 shadow-xl">
+              {/* Stars Decoration */}
+              <div className="flex items-center justify-center mb-6">
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-4 h-4 text-yellow-400 fill-yellow-400"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Bismillah */}
+              <div className="mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+                  بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+                </h2>
+              </div>
+
+              {/* Quranic Verse */}
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-6">
+                <span className="block bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent font-extrabold mb-2">
+                  &quot;وَمَنْ أَحْيَاهَا
+                </span>
+                <span className="block bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent font-extrabold">
+                  كَأَنَّمَا أَحْيَا النَّاسَ جَمِيعًا&quot;
+                </span>
+              </h1>
+
+              {/* Sadaqa Allah Al-Azeem */}
+              <div className="mb-6">
+                <h3 className="text-xl md:text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+                  صَدَقَ اللَّهُ الْعَظِيمُ
+                </h3>
+              </div>
+
+              <div className="p-4 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl border border-emerald-100 dark:border-emerald-800">
+                <p className="text-emerald-800 dark:text-emerald-200 font-medium">
+                  من أنقذ حياة إنسان واحد، فكأنما أنقذ البشرية جمعاء
+                </p>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="space-y-6">
+              <p className="text-lg lg:text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
+                انضم إلى مجتمع المتبرعين الأبطال وكن جزءًا من منظومة إنقاذ
+                الأرواح
               </p>
 
-              {/* Animated Feature Display */}
-              <div className="mt-4 h-10 flex items-center justify-start overflow-hidden">
-                <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-lg">
-                  {featureIcons[currentFeatureIndex]}
-                  <span className="text-emerald-700 dark:text-emerald-300 font-medium">
-                    {features[currentFeatureIndex]}
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <p className="text-gray-600 dark:text-gray-400">
+                  منصة{" "}
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                    &quot;إحياء&quot;
+                  </span>
+                  تربط المتبرعين بالحالات الطارئة في الوقت الفعلي، لتسهيل عملية
+                  التبرع وإنقاذ الأرواح بشكل سريع وآمن
+                </p>
+              </div>
+            </div>
+
+            {/* Social Media Broadcast Info */}
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-2xl p-6 border border-blue-200 dark:border-blue-700">
+              <h3 className="font-bold text-blue-700 dark:text-blue-300 mb-4">
+                إشعارات فورية عبر:
+              </h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="flex items-center gap-3 bg-white/70 dark:bg-gray-800/70 p-3 rounded-xl">
+                  <div className="bg-blue-500 p-2 rounded-full">
+                    <Image
+                      src="/telegram.svg"
+                      alt="Telegram"
+                      width={20}
+                      height={20}
+                      className="w-5 h-5 filter invert"
+                    />
+                  </div>
+                  <span className="font-medium text-blue-700 dark:text-blue-300 text-sm">
+                    تليجرام
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 bg-white/70 dark:bg-gray-800/70 p-3 rounded-xl">
+                  <div className="bg-blue-600 p-2 rounded-full">
+                    <Image
+                      src="/facebook.svg"
+                      alt="Facebook"
+                      width={20}
+                      height={20}
+                      className="w-5 h-5 filter invert"
+                    />
+                  </div>
+                  <span className="font-medium text-blue-700 dark:text-blue-300 text-sm">
+                    فيسبوك
                   </span>
                 </div>
               </div>
-
-              <p className="mt-4 text-gray-600 dark:text-gray-400">
-                هدفنا في &quot;إحياء&quot; هو أن نخلق شبكة دعم حقيقية تنقذ أرواح
-                الناس بقطرات دم بسيطة، لكنها ثمينة.
-              </p>
-            </div>
-
-            <div className="flex justify-start gap-4 pt-2">
-              <Button
-                size="lg"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-6 text-lg rounded-full shadow-lg transition-all hover:shadow-xl flex items-center gap-2"
-              >
-                تبرع الآن
-                <ArrowRight className="h-5 w-5 mr-1" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-emerald-600 text-emerald-700 dark:border-emerald-500 dark:text-emerald-400 px-8 py-6 text-lg rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-950/50"
-              >
-                تعرّف علينا
-              </Button>
-            </div>
-            <div className="flex items-center gap-5 pt-2">
-              {/* Enhanced Avatar Group */}
-              <div className="flex items-center">
-                <div className="flex -space-x-5 rtl:space-x-reverse">
-                  {avatars.map((avatar, index) => (
-                    <div
-                      key={index}
-                      className="w-12 h-12 rounded-full border-2 border-white dark:border-gray-800 overflow-hidden relative shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
-                      style={{ zIndex: 10 - index }}
-                    >
-                      <Image
-                        src={avatar}
-                        alt={`متبرع ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                  <div
-                    className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900 border-2 border-white dark:border-gray-800 flex items-center justify-center shadow-md relative hover:bg-emerald-200 dark:hover:bg-emerald-800 transition-colors duration-200"
-                    style={{ zIndex: 6 }}
-                  >
-                    <span className="text-emerald-700 dark:text-emerald-300 text-xs font-medium flex items-center">
-                      <Plus size={14} className="mr-0.5" />
-                      <span>996</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                انضم إلى{" "}
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                  +5,000
-                </span>{" "}
-                متبرع اليوم
-              </p>
             </div>
           </div>
 
-          {/* Image Container */}
-          <div className="md:w-1/2 relative">
-            <div className="relative w-full h-[500px] md:h-[calc(100vh-200px)] overflow-hidden rounded-3xl">
-              <Image
-                src="/hero.svg"
-                alt="تبرع بالدم"
-                fill
-                className="object-fill z-10"
-                priority
-              />
-              {/* Adaptive overlay - black in dark mode, white in light mode */}
-              <div className="absolute inset-0 bg-white/20 dark:bg-black/30 rounded-3xl z-20"></div>
-              {/* <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-yellow-500/10 rounded-3xl z-0"></div> */}
-            </div>
-            {/* Decoration Elements */}
-            <div className="absolute -top-6 -right-6 w-24 h-24 bg-yellow-400 rounded-full blur-2xl opacity-30 z-0"></div>
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500 rounded-full blur-3xl opacity-20 z-0"></div>
+          {/* Image Section */}
+          <div
+            className={`relative transition-all duration-1000 delay-300 transform 
+      
+            `}
+          >
+            <div className="relative">
+              {/* Main Image Container */}
+              <div className="relative w-full h-[600px] lg:h-[920px] rounded-3xl overflow-hidden shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 via-transparent to-blue-500/10 z-10"></div>
 
-            {/* Creative "Be the reason" badge */}
-            <div className="absolute -bottom-5 right-10 bg-white dark:bg-gray-800 shadow-lg rounded-full py-2 px-5 z-30 border-2 border-emerald-500">
-              <p className="text-emerald-700 dark:text-emerald-400 font-bold text-sm">
-                كن أنت سبب الحياة لشخص آخر
-              </p>
+                <Image
+                  src="/hero3.png"
+                  alt="إحياء - منصة التبرع بالدم"
+                  fill
+                  className="object-cover transition-transform duration-700 hover:scale-105"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-20"></div>
+              </div>
+
+              {/* Floating Elements */}
+              <div className="absolute -top-4 -right-4 bg-gradient-to-r from-emerald-500 to-teal-500 p-3 rounded-2xl shadow-lg animate-bounce">
+                <Heart className="w-6 h-6 text-white" />
+              </div>
+
+              <div className="absolute -bottom-4 -left-4 bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-2xl shadow-lg animate-bounce delay-1000">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+
+              {/* Quote Overlay */}
+              <div className="absolute bottom-6 left-6 right-6 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-2xl p-4 border border-emerald-200 dark:border-emerald-700">
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold text-center">
+                  &quot;كن السبب في إنقاذ حياة اليوم&quot;
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          <button className="flex flex-col items-center gap-2 text-emerald-700 dark:text-emerald-400 hover:text-yellow-500 dark:hover:text-yellow-400 transition-colors">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="flex flex-col items-center gap-2 text-emerald-600 dark:text-emerald-400 cursor-pointer hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full p-2 border border-emerald-300 dark:border-emerald-600">
+              <ChevronDown className="w-5 h-5" />
+            </div>
             <span className="text-sm font-medium">استكشف المزيد</span>
-            <ChevronRight className="animate-bounce h-6 w-6 rotate-90" />
-          </button>
+          </div>
         </div>
       </div>
     </div>
